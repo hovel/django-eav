@@ -167,6 +167,7 @@ class Attribute(models.Model):
     TYPE_FLOAT = 'float'
     TYPE_INT = 'int'
     TYPE_DATE = 'date'
+    TYPE_DATETIME = 'datetime'
     TYPE_BOOLEAN = 'bool'
     TYPE_OBJECT = 'object'
     TYPE_ENUM = 'enum'
@@ -176,6 +177,7 @@ class Attribute(models.Model):
         (TYPE_FLOAT, _(u"Float")),
         (TYPE_INT, _(u"Integer")),
         (TYPE_DATE, _(u"Date")),
+        (TYPE_DATETIME, _(u"Datetime")),
         (TYPE_BOOLEAN, _(u"True / False")),
         (TYPE_OBJECT, _(u"Django Object")),
         (TYPE_ENUM, _(u"Multiple Choice")),
@@ -240,6 +242,7 @@ class Attribute(models.Model):
             'float': validate_float,
             'int': validate_int,
             'date': validate_date,
+            'datetime': validate_date,
             'bool': validate_bool,
             'object': validate_object,
             'enum': validate_enum,
@@ -448,6 +451,7 @@ class Value(models.Model):
         verbose_name = _(u'value')
         verbose_name_plural = _(u'values')
 
+
 class Entity(object):
     '''
     The helper class that will be attached to any entity registered with
@@ -486,6 +490,20 @@ class Entity(object):
                 return None
         return getattr(super(Entity, self), name)
 
+    def _hasattr(self, attribute_slug):
+        '''
+        Since we override __getattr__ with a backdown to the database, this exists as a way of
+        checking whether a user has set a real attribute on ourselves, without going to the db if not
+        '''
+        return attribute_slug in self.__dict__
+
+    def _getattr(self, attribute_slug):
+        '''
+        Since we override __getattr__ with a backdown to the database, this exists as a way of
+        getting the value a user set for one of our attributes, without going to the db to check
+        '''
+        return self.__dict__[attribute_slug]
+
     def get_all_attributes(self):
         '''
         Return a query set of all :class:`Attribute` objects that can be set
@@ -512,7 +530,6 @@ class Entity(object):
         values_dict = self.get_values_dict()
 
         for attribute in self.get_all_attributes():
-            value = None
             if self._hasattr(attribute.slug):
                 value = self._getattr(attribute.slug)
             else:
