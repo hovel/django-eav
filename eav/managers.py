@@ -94,7 +94,6 @@ def expand_eav_filter(model_cls, key, value):
         value = Values.objects.filter(value_int=5, attribute__slug='height')
     '''
     fields = key.split('__')
-
     config_cls = getattr(model_cls, '_eav_config_cls', None)
     if len(fields) > 1 and config_cls and \
        fields[0] == config_cls.eav_attr:
@@ -103,7 +102,7 @@ def expand_eav_filter(model_cls, key, value):
         datatype = Attribute.objects.get(slug=slug).datatype
 
         lookup = '__%s' % fields[2] if len(fields) > 2 else ''
-        kwargs = {'value_%s%s' % (datatype, lookup): value,
+        kwargs = {str('value_%s%s' % (datatype, lookup)): value,
                   'attribute__slug': slug}
         value = Value.objects.filter(**kwargs)
 
@@ -187,3 +186,29 @@ class EntityManager(models.Manager):
             return self.get(**kwargs), False
         except self.model.DoesNotExist:
             return self.create(**kwargs), True
+    
+    def get_query_set(self):
+        """
+        Return eav frendly EntityQuerySet
+        """
+        return EntityQuerySet(self.model, using=self._db)
+
+
+class EntityQuerySet(models.query.QuerySet):
+    """
+    Override basic QuerySet, for chained filter and exclude methods
+    For example: Patient.object.filter(name='Bob').filter(eav__country='Russia')
+    """
+    @eav_filter
+    def filter(self, *args, **kwargs):
+        """
+        Pass filter through :func:`eav_filter`
+        """
+        return super(EntityQuerySet, self).filter(*args, **kwargs)
+
+    @eav_filter
+    def exclude(self, *args, **kwargs):
+        """
+        Pass exclude through :func:`eav_filter`
+        """
+        return super(EntityQuerySet, self).exclude(*args, **kwargs)

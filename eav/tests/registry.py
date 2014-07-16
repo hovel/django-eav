@@ -1,9 +1,7 @@
 from django.test import TestCase
 
 import eav
-from ..registry import Registry, EavConfig
-from ..managers import EntityManager
-from ..models import Attribute
+from ..registry import EavConfig
 
 from .models import Patient, Encounter
 
@@ -24,7 +22,7 @@ class RegistryTests(TestCase):
             generic_relation_related_name = 'encounters'
 
             @classmethod
-            def get_attributes(cls):
+            def get_attributes(cls, entity=None):
                 return 'testing'
 
         eav.register(Encounter, EncounterEav)

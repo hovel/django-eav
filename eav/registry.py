@@ -27,9 +27,9 @@ Classes
 -------
 '''
 
-from django.db.utils import DatabaseError
-from django.db.models.signals import pre_init, post_init, pre_save, post_save
+from django.db.models.signals import post_init, pre_save, post_save
 from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 
 from .managers import EntityManager
 from .models import Entity, Attribute, Value
@@ -46,15 +46,19 @@ class EavConfig(object):
     eav_attr = 'eav'
     generic_relation_attr = 'eav_values'
     generic_relation_related_name = None
+    parent = None
 
     @classmethod
-    def get_attributes(cls):
+    def get_attributes(cls, entity=None):
         '''
         By default, all :class:`~eav.models.Attribute` object apply to an
         entity, unless you provide a custom EavConfig class overriding this.
         '''
-        return Attribute.on_site.all()
-
+        qs = Attribute.on_site.all()
+        if cls.parent:
+            ctype = ContentType.objects.get_for_model(cls.parent)
+            qs = qs.filter(parent__in=(ctype, None))
+        return qs
 
 class Registry(object):
     '''
@@ -63,7 +67,7 @@ class Registry(object):
     '''
 
     @staticmethod
-    def register(model_cls, config_cls=None):
+    def register(model_cls, config_cls=None, filter_by_parent=False):
         '''
         Registers *model_cls* with eav. You can pass an optional *config_cls*
         to override the EavConfig defaults.
@@ -78,6 +82,9 @@ class Registry(object):
             config_cls = type("%sConfig" % model_cls.__name__,
                               (EavConfig,), {})
 
+        if filter_by_parent:
+            config_cls.parent = model_cls
+        
         # set _eav_config_cls on the model so we can access it there
         setattr(model_cls, '_eav_config_cls', config_cls)
 
@@ -159,7 +166,7 @@ class Registry(object):
         Set up the generic relation for the entity
         '''
         rel_name = self.config_cls.generic_relation_related_name or \
-                   self.model_cls.__name__
+                   'entity'
 
         gr_name = self.config_cls.generic_relation_attr.lower()
         generic_relation = \

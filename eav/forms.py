@@ -76,6 +76,9 @@ class BaseDynamicEntityForm(ModelForm):
 
             datatype = attribute.datatype
             if datatype == attribute.TYPE_ENUM:
+                # for enum enough standard validator
+                defaults['validators'] = []
+
                 enums = attribute.get_choices() \
                                  .values_list('id', 'value')
 
@@ -106,7 +109,7 @@ class BaseDynamicEntityForm(ModelForm):
         """
 
         if self.errors:
-            raise ValueError(_(u"The %s could not be saved because the data"
+            raise ValueError(_(u"The %s could not be saved because the data "
                              u"didn't validate.") % \
                              self.instance._meta.object_name)
 

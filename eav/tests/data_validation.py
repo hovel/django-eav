@@ -1,14 +1,17 @@
-from datetime import datetime, date
+from datetime import datetime
+try:
+    from django.utils.timezone import now
+except ImportError:
+    now = datetime.now
 
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
 import eav
-from ..registry import EavConfig
 from ..models import Attribute, Value, EnumValue, EnumGroup
 
-from .models import Patient, Encounter
+from .models import Patient
 
 
 class DataValidation(TestCase):
@@ -91,16 +94,11 @@ class DataValidation(TestCase):
         self.assertRaises(ValidationError, p.save)
         p.eav.dob = 15
         self.assertRaises(ValidationError, p.save)
-        now = datetime.now()
-        now = datetime(year=now.year, month=now.month, day=now.day,
-                       hour=now.hour, minute=now.minute, second=now.second)
-        p.eav.dob = now
+        now_datetime = now()
+        p.eav.dob = now_datetime
         p.save()
-        self.assertEqual(Patient.objects.get(pk=p.pk).eav.dob, now)
-        today = date.today()
-        p.eav.dob = today
-        p.save()
-        self.assertEqual(Patient.objects.get(pk=p.pk).eav.dob.date(), today)
+        self.assertEqual(Patient.objects.get(pk=p.pk).eav.dob, now_datetime)
+        self.assertEqual(Patient.objects.get(pk=p.pk).eav.dob.date(), now_datetime.date())
 
     def test_float_validation(self):
         p = Patient.objects.create(name='Joe')

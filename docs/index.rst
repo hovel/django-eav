@@ -134,7 +134,9 @@ For example::
 
     class MyEavConfigClass(EavConfig):
         @classmethod
-        def get_attributes(cls):
+        def get_attributes(cls, entity=None):
+            if entity:
+                return Attribute.objects.filter(type=entity.type)
             return Attribute.objects.filter(type='person')
 
     eav.register(MyModel, MyEavConfigClass)

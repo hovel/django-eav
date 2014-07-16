@@ -16,7 +16,7 @@
 #
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with EAV-Django.  If not, see <http://gnu.org/licenses/>.
-VERSION = (0, 9, 2)
+VERSION = (0, 9, 5)
 
 def get_version():
     version = "%s.%s" % (VERSION[0], VERSION[1])
@@ -26,9 +26,9 @@ def get_version():
 
 __version__ = get_version()
 
-def register(model_cls, config_cls=None):
+def register(model_cls, config_cls=None, filter_by_parent=False):
     from registry import Registry
-    Registry.register(model_cls, config_cls)
+    Registry.register(model_cls, config_cls, filter_by_parent)
 
 def unregister(model_cls):
     from registry import Registry

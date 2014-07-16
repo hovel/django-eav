@@ -7,7 +7,7 @@ from ..models import Attribute, Value
 from .models import Patient, Encounter
 
 
-class LimittingAttributes(TestCase):
+class LimitingAttributes(TestCase):
 
     def setUp(self):
         class EncounterEavConfig(EavConfig):
@@ -17,7 +17,7 @@ class LimittingAttributes(TestCase):
             generic_relation_related_name = 'encounters'
 
             @classmethod
-            def get_attributes(cls):
+            def get_attributes(cls, entity=None):
                 return Attribute.objects.filter(slug__contains='a')
 
         eav.register(Encounter, EncounterEavConfig)
@@ -53,3 +53,29 @@ class LimittingAttributes(TestCase):
         e = Encounter.objects.get(num=1)
         self.assertEqual(e.eav_field.age, 4)
         self.assertFalse(hasattr(e.eav_field, 'height'))
+        
+        
+class AttributesWithParents(TestCase):
+    
+    def setUp(self):
+        eav.register(Encounter, filter_by_parent=True)
+        eav.register(Patient, filter_by_parent=True)
+        Attribute.objects.create(name='age', parent=Patient, datatype=Attribute.TYPE_INT)
+        Attribute.objects.create(name='date', parent=Encounter, datatype=Attribute.TYPE_DATE)
+        Attribute.objects.create(name='cost', parent=Encounter, datatype=Attribute.TYPE_FLOAT)
+    
+    def tearDown(self):
+        eav.unregister(Encounter)
+        eav.unregister(Patient)
+    
+    def test_partitioned_admin(self):
+        """
+        Tests of the attribute partitioning admin objects.
+        """
+        patient_attrs = Patient._eav_config_cls.get_attributes()
+        self.assertEqual(len(patient_attrs), 1)
+        
+        encounter_attrs = Encounter._eav_config_cls.get_attributes()
+        self.assertEqual(len(encounter_attrs), 2)
+
+        

@@ -74,6 +74,9 @@ class Queries(TestCase):
         self.assertEqual(Patient.objects.filter(eav__city__contains='Y').count(), 1)
         self.assertEqual(Patient.objects.exclude(eav__city__contains='Y').count(), 4)
 
+        self.assertEqual(Patient.objects.all().filter(eav__city__contains='Y').count(), 1)
+        self.assertEqual(Patient.objects.all().exclude(eav__city__contains='Y').count(), 4)
+
         # Bob
         self.assertEqual(Patient.objects.filter(Q(eav__city__contains='Y')).count(), 1)
 
