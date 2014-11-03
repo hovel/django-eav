@@ -203,7 +203,7 @@ class Attribute(models.Model):
     def help_text(self):
         return self.description
 
-    datatype = EavDatatypeField(_(u"data type"), max_length=6,
+    datatype = EavDatatypeField(_(u"data type"), max_length=8,
                                 choices=DATATYPE_CHOICES)
 
     created = models.DateTimeField(_(u"created"), auto_now_add=True,
@@ -396,6 +396,10 @@ class Value(models.Model):
     value_bool = models.NullBooleanField(blank=True, null=True)
     value_enum = models.ForeignKey(EnumValue, blank=True, null=True,
                                    related_name='eav_values')
+
+    @property
+    def value_datetime(self):
+        return self.value_date
 
     generic_value_id = models.IntegerField(blank=True, null=True)
     generic_value_ct = models.ForeignKey(ContentType, blank=True, null=True,

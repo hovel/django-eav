@@ -7,17 +7,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-10 08:57+0400\n"
+"POT-Creation-Date: 2014-11-03 11:46+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
-#: .\fields.py:54
+#: fields.py:54
 msgid ""
 "Must be all lower case, start with a letter, and contain only letters, "
 "numbers, or underscores."
@@ -25,195 +26,199 @@ msgstr ""
 "Доожно быть в нижнем регистре, начинаться с буквы и содержать только буквы, "
 "цифры или знак подчеркивания."
 
-#: .\fields.py:87
+#: fields.py:87
 msgid "You cannot change the datatype of an attribute that is already in use."
 msgstr "Вы не можете изменить тип используемого атрибута"
 
-#: .\forms.py:109
+#: forms.py:113
 #, python-format
 msgid "The %s could not be saved because the data didn't validate."
 msgstr "%s не может быть сохранен, так как данные не прошли валидацию"
 
-#: .\models.py:79 .\models.py:449
+#: models.py:78 models.py:451
 msgid "value"
 msgstr "значение атрибута"
 
-#: .\models.py:86
+#: models.py:85
 msgid "enum value"
 msgstr "значение для выбора"
 
-#: .\models.py:87
+#: models.py:86
 msgid "enum values"
 msgstr "значения для выбора"
 
-#: .\models.py:99 .\models.py:185
+#: models.py:98 models.py:186
 msgid "name"
 msgstr "имя"
 
-#: .\models.py:101 .\models.py:107
+#: models.py:100 models.py:106
 msgid "enum group"
 msgstr "перечисление"
 
-#: .\models.py:108
+#: models.py:107
 msgid "enum groups"
 msgstr "перечисления"
 
-#: .\models.py:164 .\models.py:408
+#: models.py:163 models.py:410
 msgid "attribute"
 msgstr "атрибут"
 
-#: .\models.py:165
+#: models.py:164
 msgid "attributes"
 msgstr "атрибуты"
 
-#: .\models.py:176
+#: models.py:176
 msgid "Text"
 msgstr "Текст"
 
-#: .\models.py:177
+#: models.py:177
 msgid "Float"
 msgstr "Дробное число"
 
-#: .\models.py:178
+#: models.py:178
 msgid "Integer"
 msgstr "Целое"
 
-#: .\models.py:179
+#: models.py:179
 msgid "Date"
 msgstr "Дата"
 
-#: .\models.py:180
+#: models.py:180
+msgid "Datetime"
+msgstr "Дата/время"
+
+#: models.py:181
 msgid "True / False"
 msgstr "Истина / Ложь"
 
-#: .\models.py:181
+#: models.py:182
 msgid "Django Object"
 msgstr "Объект Django"
 
-#: .\models.py:182
+#: models.py:183
 msgid "Multiple Choice"
 msgstr "Множественный выбор"
 
-#: .\models.py:186
+#: models.py:187
 msgid "User-friendly attribute name"
 msgstr "Имя атрибута для пользователя"
 
-#: .\models.py:188
+#: models.py:189
 msgid "site"
 msgstr "сайт"
 
-#: .\models.py:191
+#: models.py:192
 msgid "slug"
 msgstr "метка"
 
-#: .\models.py:192
+#: models.py:193
 msgid "Short unique attribute label"
 msgstr "Уникальная метка атрибута"
 
-#: .\models.py:194
+#: models.py:195
 msgid "description"
 msgstr "описание"
 
-#: .\models.py:196
+#: models.py:197
 msgid "Short description"
 msgstr "Краткое описание"
 
-#: .\models.py:198
+#: models.py:199
 msgid "choice group"
 msgstr "группа выбора"
 
-#: .\models.py:205
+#: models.py:206
 msgid "data type"
 msgstr "тип данных"
 
-#: .\models.py:208 .\models.py:404
+#: models.py:209 models.py:406
 msgid "created"
 msgstr "создано"
 
-#: .\models.py:211 .\models.py:405
+#: models.py:212 models.py:407
 msgid "modified"
 msgstr "изменено"
 
-#: .\models.py:213
+#: models.py:214
 msgid "required"
 msgstr "обязательно для заполнения"
 
-#: .\models.py:214
+#: models.py:215
 msgid "display in admin list view"
 msgstr "показывать в панели администратора"
 
-#: .\models.py:215
+#: models.py:216
 msgid "Allow searching on field"
 msgstr "Разрешить поиск"
 
-#: .\models.py:261
+#: models.py:263
 #, python-format
 msgid "%(enum)s is not a valid choice for %(attr)s"
 msgstr "%(enum)s неверный вариант для %(attr)s"
 
-#: .\models.py:286
+#: models.py:288
 msgid "You must set the choice group for multiple choice attributes"
 msgstr "Вы должны установить группу выбора для атрибута с выбором"
 
-#: .\models.py:291
+#: models.py:293
 msgid "You can only assign a choice group to multiple choice attributes"
 msgstr "Вы можете установить группу выбора только для атрибута с выбором"
 
-#: .\models.py:425
+#: models.py:427
 msgid "%(choice)s is not a valid choice for %s(attribute)"
 msgstr "%(choice)s неверный вариант для %s(attribute)"
 
-#: .\models.py:450
+#: models.py:452
 msgid "values"
 msgstr "значения атрибутов"
 
-#: .\models.py:481
+#: models.py:484
 #, python-format
 msgid "%(obj)s has no EAV attribute named '%(attr)s'"
 msgstr "%(obj)s не имеет атрибута '%(attr)s'"
 
-#: .\models.py:520
+#: models.py:540
 #, python-format
 msgid "%(attr)s EAV field cannot be blank"
 msgstr "%(attr)s поле не может быть пустым"
 
-#: .\models.py:527
+#: models.py:547
 #, python-format
 msgid "%(attr)s EAV field %(err)s"
 msgstr "%(attr)s содержит ошибку %(err)s"
 
-#: .\validators.py:49
+#: validators.py:49
 msgid "Must be str or unicode"
 msgstr "Должно быть строковое значение"
 
-#: .\validators.py:59
+#: validators.py:59
 msgid "Must be a float"
 msgstr "Должно быть дробным числом"
 
-#: .\validators.py:69
+#: validators.py:69
 msgid "Must be an integer"
 msgstr "Должно быть целым числом"
 
-#: .\validators.py:78
+#: validators.py:78
 msgid "Must be a date or datetime"
 msgstr "Должно быть датой"
 
-#: .\validators.py:86
+#: validators.py:86
 msgid "Must be a boolean"
 msgstr "Должно быть истина/ложь"
 
-#: .\validators.py:95
+#: validators.py:95
 msgid "Must be a django model object instance"
 msgstr "Должно быть объект Django"
 
-#: .\validators.py:97
+#: validators.py:97
 msgid "Model has not been saved yet"
 msgstr "Модель пока не может быть сохранена"
 
-#: .\validators.py:107
+#: validators.py:107
 msgid "Must be an EnumValue model object instance"
 msgstr "Должно быть экземпляром объекта варианта для выбора"
 
-#: .\validators.py:109
+#: validators.py:109
 msgid "EnumValue has not been saved yet"
 msgstr "Значение из списка пока не может быть сохранено"
