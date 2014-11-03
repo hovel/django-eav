@@ -397,9 +397,13 @@ class Value(models.Model):
     value_enum = models.ForeignKey(EnumValue, blank=True, null=True,
                                    related_name='eav_values')
 
-    @property
-    def value_datetime(self):
+    def _get_value_datetime(self):
         return self.value_date
+
+    def _set_value_datetime(self, value):
+        self.value_date = value
+
+    value_datetime = property(_get_value_datetime, _set_value_datetime)
 
     generic_value_id = models.IntegerField(blank=True, null=True)
     generic_value_ct = models.ForeignKey(ContentType, blank=True, null=True,
