@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4 coding=utf-8
 #
-#    This software is derived from EAV-Django originally written and
+# This software is derived from EAV-Django originally written and
 #    copyrighted by Andrey Mikhaylenko <http://pypi.python.org/pypi/eav-django>
 #
 #    This is free software: you can redistribute it and/or modify
@@ -33,8 +33,6 @@ Classes
 -------
 '''
 
-from django.db import models
-from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -186,15 +184,14 @@ class Attribute(models.Model):
     name = models.CharField(_(u"name"), max_length=100,
                             help_text=_(u"User-friendly attribute name"))
 
-    site = models.ForeignKey(Site, verbose_name=_(u"site"),
-                             default=Site.objects.get_current)
+    site = models.ForeignKey(Site, verbose_name=_(u"site"))
 
     slug = EavSlugField(_(u"slug"), max_length=50, db_index=True,
-                          help_text=_(u"Short unique attribute label"))
+                        help_text=_(u"Short unique attribute label"))
 
     description = models.CharField(_(u"description"), max_length=256,
-                                     blank=True, null=True,
-                                     help_text=_(u"Short description"))
+                                   blank=True, null=True,
+                                   help_text=_(u"Short description"))
 
     enum_group = models.ForeignKey(EnumGroup, verbose_name=_(u"choice group"),
                                    blank=True, null=True)
@@ -217,16 +214,16 @@ class Attribute(models.Model):
 
     objects = models.Manager()
     on_site = CurrentSiteManager()
-    
+
     #reference to Django model that this attribute is restricted to
     parent = models.ForeignKey(ContentType, null=True, blank=True)
-    
+
     def __init__(self, *args, **kwargs):
         parent = kwargs.get('parent', None)
         if parent and not isinstance(parent, ContentType):
             kwargs['parent'] = ContentType.objects.get_for_model(parent)
-        return super(Attribute, self).__init__(*args, **kwargs)
-    
+        super(Attribute, self).__init__(*args, **kwargs)
+
     def get_validators(self):
         '''
         Returns the appropriate validator function from :mod:`~eav.validators`
@@ -262,7 +259,7 @@ class Attribute(models.Model):
             if value not in self.enum_group.enums.all():
                 raise ValidationError(_(u"%(enum)s is not a valid choice "
                                         u"for %(attr)s") % \
-                                       {'enum': value, 'attr': self})
+                                      {'enum': value, 'attr': self})
 
     def save(self, *args, **kwargs):
         '''
@@ -274,6 +271,8 @@ class Attribute(models.Model):
         '''
         if not self.slug:
             self.slug = EavSlugField.create_slug_from_name(self.name)
+        if not self.site:
+            self.site = Site.objects.get_current()
         self.full_clean()
         super(Attribute, self).save(*args, **kwargs)
 
@@ -333,7 +332,7 @@ class Attribute(models.Model):
         if value != value_obj.value:
             value_obj.value = value
             value_obj.save()
-            
+
     @classmethod
     def get_for_model(cls, model):
         ct = ContentType.objects.get_for_model(model)
@@ -341,7 +340,8 @@ class Attribute(models.Model):
 
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.get_datatype_display())
-    
+
+
 class PartitionedAttributeManager(models.Manager):
     def get_query_set(self):
         qs = super(PartitionedAttributeManager, self).get_query_set()
@@ -351,17 +351,17 @@ class PartitionedAttributeManager(models.Manager):
         else:
             return qs
 
+
 class PartitionedAttribute(Attribute):
     """
     A proxy model class to handle segregating types of Attributes by the
     Entities they can be applied to.
     """
     objects = PartitionedAttributeManager()
-    parent_model = None #this must be set in the derived class or this isn't actually partitioned
-    
+    parent_model = None  #this must be set in the derived class or this isn't actually partitioned
+
     class Meta:
         proxy = True
-        
 
 
 class Value(models.Model):
@@ -430,12 +430,12 @@ class Value(models.Model):
         and value_enum is not a valid choice for this value's attribute.
         '''
         if self.attribute.datatype == Attribute.TYPE_ENUM and \
-           self.value_enum:
+                self.value_enum:
             if self.value_enum not in self.attribute.enum_group.enums.all():
                 raise ValidationError(_(u"%(choice)s is not a valid " \
                                         u"choice for %s(attribute)") % \
-                                        {'choice': self.value_enum,
-                                         'attribute': self.attribute})
+                                      {'choice': self.value_enum,
+                                       'attribute': self.attribute})
 
     def _get_value(self):
         '''
@@ -542,20 +542,20 @@ class Entity(object):
                 value = self._getattr(attribute.slug)
             else:
                 value = values_dict.get(attribute.slug, None)
-            
+
             if value is None:
                 if attribute.required:
                     raise ValidationError(_(u"%(attr)s EAV field cannot " \
-                                                u"be blank") % \
-                                              {'attr': attribute.slug})
+                                            u"be blank") % \
+                                          {'attr': attribute.slug})
             else:
                 try:
                     attribute.validate_value(value)
                 except ValidationError, e:
                     raise ValidationError(_(u"%(attr)s EAV field %(err)s") % \
-                                              {'attr': attribute.slug,
-                                               'err': e})
-                
+                                          {'attr': attribute.slug,
+                                           'err': e})
+
     def get_values_dict(self):
         values_dict = dict()
         for value in self.get_values():
@@ -618,6 +618,7 @@ class Entity(object):
         instance = kwargs['instance']
         entity = getattr(kwargs['instance'], instance._eav_config_cls.eav_attr)
         entity.validate_attributes()
+
 
 if 'django_nose' in settings.INSTALLED_APPS:
     '''
