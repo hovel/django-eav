@@ -343,8 +343,8 @@ class Attribute(models.Model):
 
 
 class PartitionedAttributeManager(models.Manager):
-    def get_query_set(self):
-        qs = super(PartitionedAttributeManager, self).get_query_set()
+    def get_queryset(self):
+        qs = super(PartitionedAttributeManager, self).get_queryset()
         if self.model.parent_model:
             ctype = ContentType.objects.get_for_model(model=self.model.parent_model)
             return qs.filter(parent=ctype)

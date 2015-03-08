@@ -187,7 +187,7 @@ class EntityManager(models.Manager):
         except self.model.DoesNotExist:
             return self.create(**kwargs), True
     
-    def get_query_set(self):
+    def get_queryset(self):
         """
         Return eav frendly EntityQuerySet
         """
