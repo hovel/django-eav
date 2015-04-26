@@ -147,12 +147,12 @@ class PartitionedAttributeAdmin(AttributeAdmin):
     """
     exclude = ('parent',)
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         """
         Instead of returning all Attributes, return only those
         pertaining to a specific model, specified by subclass's parent_model.
         """
-        qs = super(PartitionedAttributeAdmin, self).queryset(request)
+        qs = super(PartitionedAttributeAdmin, self).get_queryset(request)
         ctype = ContentType.objects.get_for_model(self.parent_model)
         return qs.filter(parent=ctype)
 
