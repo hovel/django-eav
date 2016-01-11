@@ -1,19 +1,17 @@
 from django.test import TestCase
 from django.db.models import Q
 from django.contrib.auth.models import User
-
-from ..registry import EavConfig
-from ..models import EnumValue, EnumGroup, Attribute, Value
-
-import eav
-from .models import Patient, Encounter
+from eav import register, unregister
+from eav.registry import EavConfig
+from eav.models import EnumValue, EnumGroup, Attribute, Value
+from eav.tests.models import Patient, Encounter
 
 
 class Queries(TestCase):
 
     def setUp(self):
-        eav.register(Encounter)
-        eav.register(Patient)
+        register(Encounter)
+        register(Patient)
 
         Attribute.objects.create(name='age', datatype=Attribute.TYPE_INT)
         Attribute.objects.create(name='height', datatype=Attribute.TYPE_FLOAT)
@@ -31,8 +29,8 @@ class Queries(TestCase):
         Attribute.objects.create(name='fever', datatype=Attribute.TYPE_ENUM, enum_group=ynu)
 
     def tearDown(self):
-        eav.unregister(Encounter)
-        eav.unregister(Patient)
+        unregister(Encounter)
+        unregister(Patient)
 
     def test_get_or_create_with_eav(self):
         p = Patient.objects.get_or_create(name='Bob', eav__age=5)
@@ -46,9 +44,9 @@ class Queries(TestCase):
         self.assertEqual(Value.objects.count(), 2)
 
     def test_get_with_eav(self):
-        p1 = Patient.objects.get_or_create(name='Bob', eav__age=6)
+        p1, _ = Patient.objects.get_or_create(name='Bob', eav__age=6)
         self.assertEqual(Patient.objects.get(eav__age=6), p1)
-        p2 = Patient.objects.get_or_create(name='Fred', eav__age=6)
+        p2, _ = Patient.objects.get_or_create(name='Fred', eav__age=6)
         self.assertRaises(Patient.MultipleObjectsReturned,
                           Patient.objects.get, eav__age=6)
 
@@ -110,6 +108,6 @@ class Queries(TestCase):
         class UserEavConfig(EavConfig):
             manager_only = True
 
-        eav.register(User, UserEavConfig)
+        register(User, UserEavConfig)
 
         c = User.objects.create(username='joe')

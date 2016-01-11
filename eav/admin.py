@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4 coding=utf-8
 #
-#    This software is derived from EAV-Django originally written and 
+#    This software is derived from EAV-Django originally written and
 #    copyrighted by Andrey Mikhaylenko <http://pypi.python.org/pypi/eav-django>
 #
 #    This is free software: you can redistribute it and/or modify
@@ -28,14 +28,14 @@ from django.utils.safestring import mark_safe
 from django.contrib.contenttypes.models import ContentType
 
 
-from .models import Attribute, Value, EnumValue, EnumGroup
-from .forms import BaseDynamicEntityForm
+from eav.models import Attribute, Value, EnumValue, EnumGroup
+from eav.forms import BaseDynamicEntityForm
 
 
 class BaseEntityAdmin(ModelAdmin):
     form = BaseDynamicEntityForm
     attribute_class = None
-    
+
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         """
         Wrapper for ModelAdmin.render_change_form. Replaces standard static
@@ -63,17 +63,17 @@ class BaseEntityAdmin(ModelAdmin):
     if (1,4) > django.VERSION:
         def changelist_view(self, request, extra_context=None):
             """
-            Override of changelist_view to provide dynamic calculation of 
+            Override of changelist_view to provide dynamic calculation of
             list_display.  This will no longer be necessary after Django 1.4 -
             see django changeset 16340.
-            
+
             This may not be threadsafe.  Don't do anything with side effects.
             """
             if hasattr(self, 'get_list_display'):
                 self.list_display = self.get_list_display(request)
             return super(BaseEntityAdmin, self).changelist_view(request, extra_context)
 
-        
+
     def get_list_display(self, request):
         """
         Adds all attributes configured with display_in_list
@@ -90,8 +90,8 @@ class BaseEntityAdmin(ModelAdmin):
             setattr(self.model, func_name, func)
             base_list_display.append(func_name)
         return base_list_display
-            
-        
+
+
 class BaseEntityInlineFormSet(BaseInlineFormSet):
     """
     An inline formset that correctly initializes EAV forms.
@@ -137,8 +137,8 @@ class AttributeAdmin(ModelAdmin):
     list_display = ('name', 'slug', 'datatype', 'description', 'site')
     list_filter = ['site']
     prepopulated_fields = {'slug': ('name',)}
-    
-    
+
+
 class PartitionedAttributeAdmin(AttributeAdmin):
     """
     Abstract base class for Admins of specific types of Attributes.

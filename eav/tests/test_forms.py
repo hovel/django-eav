@@ -5,14 +5,14 @@ except ImportError:
     now = datetime.now
 from django.test import TestCase
 
-import eav
-from .models import Patient
-from ..forms import BaseDynamicEntityForm
-from ..models import Attribute, EnumValue, EnumGroup
+from eav import register
+from eav.tests.models import Patient
+from eav.forms import BaseDynamicEntityForm
+from eav.models import Attribute, EnumValue, EnumGroup
 
 class FormTest(TestCase):
     def setUp(self):
-        eav.register(Patient)
+        register(Patient)
 
         Attribute.objects.create(name='Age', datatype=Attribute.TYPE_INT)
         Attribute.objects.create(name='DoB', datatype=Attribute.TYPE_DATE)
@@ -31,7 +31,8 @@ class FormTest(TestCase):
 
     def test_form_validation(self):
         kwargs = {'eav__age': 2, 'eav__dob': now(), 'eav__height': 14.1,
-                'eav__city': 'SomeSity', 'eav__pregnant':False, 'eav__fever':EnumValue.objects.get(id=2)}
+                  'eav__city': 'SomeSity', 'eav__pregnant': False,
+                  'eav__fever': EnumValue.objects.get(id=2)}
         p = Patient.objects.create(**kwargs)
 
         # required "fever" field
@@ -40,6 +41,7 @@ class FormTest(TestCase):
         self.assertFalse(form.is_valid())
 
         # all valid
-        data = {'age': 1, 'dob_0': '2012-01-01', 'dob_1': '12:00:00', 'height': 10.1, 'city': 'Moscow', 'pregnant':True, 'fever':1}
+        data = {'age': 1, 'dob_0': '2012-01-01', 'dob_1': '12:00:00',
+                'height': 10.1, 'city': 'Moscow', 'pregnant': True, 'fever': 1}
         form = BaseDynamicEntityForm(data=data, instance=p)
         self.assertTrue(form.is_valid())

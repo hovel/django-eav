@@ -1,0 +1,14 @@
+language: python
+sudo: false
+python:
+  - "2.7"
+  - "3.4"
+  - "3.5"
+env:
+  - DJANGO="Django>=1.8,<1.9" DB=sqlite
+  - DJANGO="Django>=1.9,<1.10" DB=sqlite
+install:
+  - export PYTHONPATH=./eav/:$PYTHONPATH
+  - pip install -U $DJANGO
+script:
+  - python testproject/manage.py test

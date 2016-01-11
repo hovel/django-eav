@@ -1,21 +1,26 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 
+
+@python_2_unicode_compatible
 class Patient(models.Model):
-    class Meta:
-        app_label = 'eav'
-
     name = models.CharField(max_length=12)
 
-    def __unicode__(self):
-        return self.name
-
-class Encounter(models.Model):
     class Meta:
         app_label = 'eav'
 
+    def __str__(self):
+        return self.name
+
+
+class Encounter(models.Model):
     num = models.PositiveSmallIntegerField()
     patient = models.ForeignKey(Patient)
 
-    def __unicode__(self):
-        return '%s: encounter num %d' % (self.patient, self.num)
+    class Meta:
+        app_label = 'eav'
 
+    def __str__(self):
+        return '{}: encounter num {}'.format(self.patient, self.num)

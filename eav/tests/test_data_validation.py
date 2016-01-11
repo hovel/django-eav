@@ -8,16 +8,15 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
-import eav
-from ..models import Attribute, Value, EnumValue, EnumGroup
-
-from .models import Patient
+from eav import register, unregister
+from eav.models import Attribute, Value, EnumValue, EnumGroup
+from eav.tests.models import Patient
 
 
 class DataValidation(TestCase):
 
     def setUp(self):
-        eav.register(Patient)
+        register(Patient)
 
         Attribute.objects.create(name='Age', datatype=Attribute.TYPE_INT)
         Attribute.objects.create(name='DoB', datatype=Attribute.TYPE_DATE)
@@ -27,7 +26,7 @@ class DataValidation(TestCase):
         Attribute.objects.create(name='User', datatype=Attribute.TYPE_OBJECT)
 
     def tearDown(self):
-        eav.unregister(Patient)
+        unregister(Patient)
 
     def test_required_field(self):
         p = Patient(name='Bob')

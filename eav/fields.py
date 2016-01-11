@@ -29,9 +29,8 @@ Contains two custom fields:
 Classes
 -------
 '''
-
+from __future__ import unicode_literals
 import re
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -51,9 +50,9 @@ class EavSlugField(models.SlugField):
         super(EavSlugField, self).validate(value, instance)
         slug_regex = r'[a-z][a-z0-9_]*'
         if not re.match(slug_regex, value):
-            raise ValidationError(_(u"Must be all lower case, " \
-                                    u"start with a letter, and contain " \
-                                    u"only letters, numbers, or underscores."))
+            raise ValidationError(_("Must be all lower case, " \
+                                    "start with a letter, and contain " \
+                                    "only letters, numbers, or underscores."))
 
     @staticmethod
     def create_slug_from_name(name):
@@ -84,8 +83,8 @@ class EavDatatypeField(models.CharField):
             return
         from .models import Attribute
         if Attribute.objects.get(id=instance.id).datatype != value and instance.value_set.count():
-            raise ValidationError(_(u"You cannot change the datatype of an "
-                                    u"attribute that is already in use."))
+            raise ValidationError(_("You cannot change the datatype of an "
+                                    "attribute that is already in use."))
 
 try:
     from south.modelsinspector import add_introspection_rules

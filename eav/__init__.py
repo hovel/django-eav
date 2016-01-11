@@ -27,9 +27,9 @@ def get_version():
 __version__ = get_version()
 
 def register(model_cls, config_cls=None, filter_by_parent=False):
-    from registry import Registry
+    from eav.registry import Registry
     Registry.register(model_cls, config_cls, filter_by_parent)
 
 def unregister(model_cls):
-    from registry import Registry
+    from eav.registry import Registry
     Registry.unregister(model_cls)

@@ -33,20 +33,23 @@ These validators are called by the
 Functions
 ---------
 '''
-
+from __future__ import unicode_literals
 from datetime import datetime, date
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
+try:
+    string_types = basestring
+except NameError:
+    string_types = str
 
 
 def validate_text(value):
     '''
     Raises ``ValidationError`` unless *value* type is ``str`` or ``unicode``
     '''
-    if not (type(value) == unicode or type(value) == str):
-        raise ValidationError(_(u"Must be str or unicode"))
+    if not isinstance(value, string_types):
+        raise ValidationError(_("Must be str or unicode"))
 
 
 def validate_float(value):
@@ -56,7 +59,7 @@ def validate_float(value):
     try:
         float(value)
     except ValueError:
-        raise ValidationError(_(u"Must be a float"))
+        raise ValidationError(_("Must be a float"))
 
 
 def validate_int(value):
@@ -66,7 +69,7 @@ def validate_int(value):
     try:
         int(value)
     except ValueError:
-        raise ValidationError(_(u"Must be an integer"))
+        raise ValidationError(_("Must be an integer"))
 
 
 def validate_date(value):
@@ -75,7 +78,7 @@ def validate_date(value):
     or ``date``
     '''
     if not (isinstance(value, datetime) or isinstance(value, date)):
-        raise ValidationError(_(u"Must be a date or datetime"))
+        raise ValidationError(_("Must be a date or datetime"))
 
 
 def validate_bool(value):
@@ -83,7 +86,7 @@ def validate_bool(value):
     Raises ``ValidationError`` unless *value* type is ``bool``
     '''
     if not type(value) == bool:
-        raise ValidationError(_(u"Must be a boolean"))
+        raise ValidationError(_("Must be a boolean"))
 
 
 def validate_object(value):
@@ -92,9 +95,9 @@ def validate_object(value):
     django model instance.
     '''
     if not isinstance(value, models.Model):
-        raise ValidationError(_(u"Must be a django model object instance"))
+        raise ValidationError(_("Must be a django model object instance"))
     if not value.pk:
-        raise ValidationError(_(u"Model has not been saved yet"))
+        raise ValidationError(_("Model has not been saved yet"))
 
 
 def validate_enum(value):
@@ -104,6 +107,6 @@ def validate_enum(value):
     '''
     from .models import EnumValue
     if not isinstance(value, EnumValue):
-        raise ValidationError(_(u"Must be an EnumValue model object instance"))
+        raise ValidationError(_("Must be an EnumValue model object instance"))
     if not value.pk:
-        raise ValidationError(_(u"EnumValue has not been saved yet"))
+        raise ValidationError(_("EnumValue has not been saved yet"))

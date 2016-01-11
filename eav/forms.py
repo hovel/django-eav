@@ -26,8 +26,8 @@ The forms used for admin integration
 Classes
 -------
 '''
+from __future__ import unicode_literals
 from copy import deepcopy
-
 from django.forms import BooleanField, CharField, DateTimeField, FloatField, \
                          IntegerField, ModelForm, ChoiceField, DateField
 from django.contrib.admin.widgets import AdminSplitDateTime
@@ -56,6 +56,8 @@ class BaseDynamicEntityForm(ModelForm):
     }
 
     def __init__(self, data=None, *args, **kwargs):
+        if not self._meta.model and 'instance' in kwargs:
+            self._meta.model = kwargs['instance']._meta.model
         super(BaseDynamicEntityForm, self).__init__(data, *args, **kwargs)
         config_cls = self.instance._eav_config_cls
         self.entity = getattr(self.instance, config_cls.eav_attr)
@@ -110,8 +112,8 @@ class BaseDynamicEntityForm(ModelForm):
         """
 
         if self.errors:
-            raise ValueError(_(u"The %s could not be saved because the data "
-                             u"didn't validate.") % \
+            raise ValueError(_("The %s could not be saved because the data "
+                             "didn't validate.") % \
                              self.instance._meta.object_name)
 
         # create entity instance, don't save yet

@@ -32,18 +32,18 @@ Along with the :class:`Entity` helper class.
 Classes
 -------
 '''
-
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
-from django.conf import settings
-
-from .validators import *
-from .fields import EavSlugField, EavDatatypeField
+from eav.validators import *
+from eav.fields import EavSlugField, EavDatatypeField
 
 
+@python_2_unicode_compatible
 class EnumValue(models.Model):
     '''
     *EnumValue* objects are the value 'choices' to multiple choice
@@ -73,17 +73,18 @@ class EnumValue(models.Model):
        objects, as you should have used the same *Yes* and *No* *EnumValues*
        for both *EnumGroups*.
     '''
-    value = models.CharField(_(u"value"), db_index=True,
+    value = models.CharField(_("value"), db_index=True,
                              unique=True, max_length=50)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.value
 
     class Meta:
-        verbose_name = _(u'enum value')
-        verbose_name_plural = _(u'enum values')
+        verbose_name = _('enum value')
+        verbose_name_plural = _('enum values')
 
 
+@python_2_unicode_compatible
 class EnumGroup(models.Model):
     '''
     *EnumGroup* objects have two fields- a *name* ``CharField`` and *enums*,
@@ -93,18 +94,19 @@ class EnumGroup(models.Model):
     See :class:`EnumValue` for an example.
 
     '''
-    name = models.CharField(_(u"name"), unique=True, max_length=100)
+    name = models.CharField(_("name"), unique=True, max_length=100)
 
-    enums = models.ManyToManyField(EnumValue, verbose_name=_(u"enum group"))
+    enums = models.ManyToManyField(EnumValue, verbose_name=_("enum group"))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _(u'enum group')
-        verbose_name_plural = _(u'enum groups')
+        verbose_name = _('enum group')
+        verbose_name_plural = _('enum groups')
 
 
+@python_2_unicode_compatible
 class Attribute(models.Model):
     '''
     Putting the **A** in *EAV*. This holds the attributes, or concepts.
@@ -158,8 +160,8 @@ class Attribute(models.Model):
     class Meta:
         ordering = ['name']
         unique_together = ('site', 'slug', 'parent')
-        verbose_name = _(u'attribute')
-        verbose_name_plural = _(u'attributes')
+        verbose_name = _('attribute')
+        verbose_name_plural = _('attributes')
 
     TYPE_TEXT = 'text'
     TYPE_FLOAT = 'float'
@@ -171,46 +173,46 @@ class Attribute(models.Model):
     TYPE_ENUM = 'enum'
 
     DATATYPE_CHOICES = (
-        (TYPE_TEXT, _(u"Text")),
-        (TYPE_FLOAT, _(u"Float")),
-        (TYPE_INT, _(u"Integer")),
-        (TYPE_DATE, _(u"Date")),
-        (TYPE_DATETIME, _(u"Datetime")),
-        (TYPE_BOOLEAN, _(u"True / False")),
-        (TYPE_OBJECT, _(u"Django Object")),
-        (TYPE_ENUM, _(u"Multiple Choice")),
+        (TYPE_TEXT, _("Text")),
+        (TYPE_FLOAT, _("Float")),
+        (TYPE_INT, _("Integer")),
+        (TYPE_DATE, _("Date")),
+        (TYPE_DATETIME, _("Datetime")),
+        (TYPE_BOOLEAN, _("True / False")),
+        (TYPE_OBJECT, _("Django Object")),
+        (TYPE_ENUM, _("Multiple Choice")),
     )
 
-    name = models.CharField(_(u"name"), max_length=100,
-                            help_text=_(u"User-friendly attribute name"))
+    name = models.CharField(_("name"), max_length=100,
+                            help_text=_("User-friendly attribute name"))
 
-    site = models.ForeignKey(Site, verbose_name=_(u"site"))
+    site = models.ForeignKey(Site, verbose_name=_("site"))
 
-    slug = EavSlugField(_(u"slug"), max_length=50, db_index=True,
-                        help_text=_(u"Short unique attribute label"))
+    slug = EavSlugField(_("slug"), max_length=50, db_index=True,
+                        help_text=_("Short unique attribute label"))
 
-    description = models.CharField(_(u"description"), max_length=256,
+    description = models.CharField(_("description"), max_length=256,
                                    blank=True, null=True,
-                                   help_text=_(u"Short description"))
+                                   help_text=_("Short description"))
 
-    enum_group = models.ForeignKey(EnumGroup, verbose_name=_(u"choice group"),
+    enum_group = models.ForeignKey(EnumGroup, verbose_name=_("choice group"),
                                    blank=True, null=True)
 
     @property
     def help_text(self):
         return self.description
 
-    datatype = EavDatatypeField(_(u"data type"), max_length=8,
+    datatype = EavDatatypeField(_("data type"), max_length=8,
                                 choices=DATATYPE_CHOICES)
 
-    created = models.DateTimeField(_(u"created"), auto_now_add=True,
+    created = models.DateTimeField(_("created"), auto_now_add=True,
                                    editable=False)
 
-    modified = models.DateTimeField(_(u"modified"), auto_now=True)
+    modified = models.DateTimeField(_("modified"), auto_now=True)
 
-    required = models.BooleanField(_(u"required"), default=False)
-    display_in_list = models.BooleanField(_(u"display in admin list view"), default=False)
-    searchable = models.BooleanField(_(u"Allow searching on field"), default=False)
+    required = models.BooleanField(_("required"), default=False)
+    display_in_list = models.BooleanField(_("display in admin list view"), default=False)
+    searchable = models.BooleanField(_("Allow searching on field"), default=False)
 
     objects = models.Manager()
     on_site = CurrentSiteManager()
@@ -257,21 +259,21 @@ class Attribute(models.Model):
             validator(value)
         if self.datatype == self.TYPE_ENUM:
             if value not in self.enum_group.enums.all():
-                raise ValidationError(_(u"%(enum)s is not a valid choice "
-                                        u"for %(attr)s") % \
+                raise ValidationError(_("%(enum)s is not a valid choice "
+                                        "for %(attr)s") % \
                                       {'enum': value, 'attr': self})
 
     def save(self, *args, **kwargs):
         '''
         Saves the Attribute and auto-generates a slug field if one wasn't
         provided.
-        
-        If parent provided is not already a ContentType, calculate this.  
+
+        If parent provided is not already a ContentType, calculate this.
         Yes, this means you can't add Attributes for the ContentType model.
         '''
-        if not self.slug:
+        if not getattr(self, 'slug', None):
             self.slug = EavSlugField.create_slug_from_name(self.name)
-        if not self.site:
+        if not getattr(self, 'site', None):
             self.site = Site.objects.get_current()
         self.full_clean()
         super(Attribute, self).save(*args, **kwargs)
@@ -284,13 +286,13 @@ class Attribute(models.Model):
         '''
         if self.datatype == self.TYPE_ENUM and not self.enum_group:
             raise ValidationError(_(
-                u"You must set the choice group for multiple choice " \
-                u"attributes"))
+                "You must set the choice group for multiple choice " \
+                "attributes"))
 
         if self.datatype != self.TYPE_ENUM and self.enum_group:
             raise ValidationError(_(
-                u"You can only assign a choice group to multiple choice " \
-                u"attributes"))
+                "You can only assign a choice group to multiple choice " \
+                "attributes"))
 
     def get_choices(self):
         '''
@@ -338,8 +340,8 @@ class Attribute(models.Model):
         ct = ContentType.objects.get_for_model(model)
         return cls.objects.filter(parent__in=(None, ct))
 
-    def __unicode__(self):
-        return u"%s (%s)" % (self.name, self.get_datatype_display())
+    def __str__(self):
+        return "%s (%s)" % (self.name, self.get_datatype_display())
 
 
 class PartitionedAttributeManager(models.Manager):
@@ -364,6 +366,7 @@ class PartitionedAttribute(Attribute):
         proxy = True
 
 
+@python_2_unicode_compatible
 class Value(models.Model):
     '''
     Putting the **V** in *EAV*. This model stores the value for one particular
@@ -386,8 +389,7 @@ class Value(models.Model):
 
     entity_ct = models.ForeignKey(ContentType, related_name='value_entities')
     entity_id = models.IntegerField()
-    entity = generic.GenericForeignKey(ct_field='entity_ct',
-                                       fk_field='entity_id')
+    entity = GenericForeignKey(ct_field='entity_ct', fk_field='entity_id')
 
     value_text = models.TextField(blank=True, null=True)
     value_float = models.FloatField(blank=True, null=True)
@@ -408,14 +410,14 @@ class Value(models.Model):
     generic_value_id = models.IntegerField(blank=True, null=True)
     generic_value_ct = models.ForeignKey(ContentType, blank=True, null=True,
                                          related_name='value_values')
-    value_object = generic.GenericForeignKey(ct_field='generic_value_ct',
-                                             fk_field='generic_value_id')
+    value_object = GenericForeignKey(ct_field='generic_value_ct',
+                                     fk_field='generic_value_id')
 
-    created = models.DateTimeField(_(u"created"), auto_now_add=True)
-    modified = models.DateTimeField(_(u"modified"), auto_now=True)
+    created = models.DateTimeField(_("created"), auto_now_add=True)
+    modified = models.DateTimeField(_("modified"), auto_now=True)
 
     attribute = models.ForeignKey(Attribute, db_index=True,
-                                  verbose_name=_(u"attribute"))
+                                  verbose_name=_("attribute"))
 
     def save(self, *args, **kwargs):
         '''
@@ -432,8 +434,8 @@ class Value(models.Model):
         if self.attribute.datatype == Attribute.TYPE_ENUM and \
                 self.value_enum:
             if self.value_enum not in self.attribute.enum_group.enums.all():
-                raise ValidationError(_(u"%(choice)s is not a valid " \
-                                        u"choice for %s(attribute)") % \
+                raise ValidationError(_("%(choice)s is not a valid " \
+                                        "choice for %s(attribute)") % \
                                       {'choice': self.value_enum,
                                        'attribute': self.attribute})
 
@@ -451,13 +453,13 @@ class Value(models.Model):
 
     value = property(_get_value, _set_value)
 
-    def __unicode__(self):
-        return u"%s - %s: \"%s\"" % (self.entity, self.attribute.name,
+    def __str__(self):
+        return "%s - %s: \"%s\"" % (self.entity, self.attribute.name,
                                      self.value)
 
     class Meta:
-        verbose_name = _(u'value')
-        verbose_name_plural = _(u'values')
+        verbose_name = _('value')
+        verbose_name_plural = _('values')
 
 
 class Entity(object):
@@ -489,8 +491,8 @@ class Entity(object):
             try:
                 attribute = self.get_attribute_by_slug(name)
             except Attribute.DoesNotExist:
-                raise AttributeError(_(u"%(obj)s has no EAV attribute named " \
-                                       u"'%(attr)s'") % \
+                raise AttributeError(_("%(obj)s has no EAV attribute named " \
+                                       "'%(attr)s'") % \
                                      {'obj': self.model, 'attr': name})
             try:
                 return self.get_value_by_attribute(attribute).value
@@ -545,14 +547,14 @@ class Entity(object):
 
             if value is None:
                 if attribute.required:
-                    raise ValidationError(_(u"%(attr)s EAV field cannot " \
-                                            u"be blank") % \
+                    raise ValidationError(_("%(attr)s EAV field cannot " \
+                                            "be blank") % \
                                           {'attr': attribute.slug})
             else:
                 try:
                     attribute.validate_value(value)
                 except ValidationError as e:
-                    raise ValidationError(_(u"%(attr)s EAV field %(err)s") % \
+                    raise ValidationError(_("%(attr)s EAV field %(err)s") % \
                                           {'attr': attribute.slug,
                                            'err': e})
 
@@ -618,13 +620,3 @@ class Entity(object):
         instance = kwargs['instance']
         entity = getattr(kwargs['instance'], instance._eav_config_cls.eav_attr)
         entity.validate_attributes()
-
-
-if 'django_nose' in settings.INSTALLED_APPS:
-    '''
-    The django_nose test runner won't automatically create our Patient model
-    database table which is required for tests, unless we import it here.
-
-    Please, someone tell me a better way to do this.
-    '''
-    from .tests.models import Patient, Encounter

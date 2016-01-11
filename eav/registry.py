@@ -26,13 +26,12 @@ This contains the registry classes
 Classes
 -------
 '''
-
 from django.db.models.signals import post_init, pre_save, post_save
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
-from .managers import EntityManager
-from .models import Entity, Attribute, Value
+from eav.managers import EntityManager
+from eav.models import Entity, Attribute, Value
 
 
 class EavConfig(object):
@@ -84,7 +83,7 @@ class Registry(object):
 
         if filter_by_parent:
             config_cls.parent = model_cls
-        
+
         # set _eav_config_cls on the model so we can access it there
         setattr(model_cls, '_eav_config_cls', config_cls)
 
@@ -169,11 +168,10 @@ class Registry(object):
                    'entity'
 
         gr_name = self.config_cls.generic_relation_attr.lower()
-        generic_relation = \
-                     generic.GenericRelation(Value,
-                                             object_id_field='entity_id',
-                                             content_type_field='entity_ct',
-                                             related_query_name=rel_name)
+        generic_relation = GenericRelation(Value,
+                                           object_id_field='entity_id',
+                                           content_type_field='entity_ct',
+                                           related_query_name=rel_name)
         generic_relation.contribute_to_class(self.model_cls, gr_name)
 
     def _detach_generic_relation(self):
