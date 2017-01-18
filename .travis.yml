@@ -11,4 +11,4 @@ install:
   - export PYTHONPATH=./eav/:$PYTHONPATH
   - pip install -U $DJANGO
 script:
-  - python testproject/manage.py test
+  - python tests/manage.py test

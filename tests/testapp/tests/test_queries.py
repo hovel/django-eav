@@ -1,10 +1,11 @@
-from django.test import TestCase
-from django.db.models import Q
 from django.contrib.auth.models import User
+from django.db.models import Q
+from django.test import TestCase
+
 from eav import register, unregister
-from eav.registry import EavConfig
 from eav.models import EnumValue, EnumGroup, Attribute, Value
-from eav.tests.models import Patient, Encounter
+from eav.registry import EavConfig
+from testapp.models import Patient, Encounter
 
 
 class Queries(TestCase):

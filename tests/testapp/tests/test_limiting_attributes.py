@@ -1,9 +1,9 @@
 from django.test import TestCase
 
 from eav import register, unregister
-from eav.registry import EavConfig
 from eav.models import Attribute, Value
-from eav.tests.models import Patient, Encounter
+from eav.registry import EavConfig
+from testapp.models import Patient, Encounter
 
 
 class LimitingAttributes(TestCase):

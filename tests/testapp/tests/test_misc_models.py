@@ -1,8 +1,9 @@
 from django.test import TestCase
 from django.utils.encoding import force_text
+
 from eav import register
 from eav.models import EnumGroup, Attribute, Value
-from eav.tests.models import Patient
+from testapp.models import Patient
 
 
 class MiscModels(TestCase):

@@ -39,7 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'eav',
-    'eav.tests',
+    'testapp',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -106,8 +106,3 @@ STATIC_URL = '/static/'
 
 
 SITE_ID = 1
-
-
-MIGRATION_MODULES = {
-    'eav': 'eav.fake_migrations'
-}

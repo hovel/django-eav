@@ -6,7 +6,7 @@ except ImportError:
 from django.test import TestCase
 
 from eav import register
-from eav.tests.models import Patient
+from testapp.models import Patient
 from eav.forms import BaseDynamicEntityForm
 from eav.models import Attribute, EnumValue, EnumGroup
 
