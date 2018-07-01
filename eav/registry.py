@@ -26,6 +26,7 @@ This contains the registry classes
 Classes
 -------
 '''
+from django.db.models.manager import ManagerDescriptor
 from django.db.models.signals import post_init, pre_save, post_save
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
@@ -130,14 +131,28 @@ class Registry(object):
             mgr = getattr(self.model_cls, self.config_cls.manager_attr)
             self.config_cls.old_mgr = mgr
 
-        # attache the new manager to the model
+        # attach the new manager to the model
+
+        model, name = self.model_cls, self.config_cls.manager_attr
+
         mgr = EntityManager()
-        mgr.contribute_to_class(self.model_cls, self.config_cls.manager_attr)
+        if not mgr.name:
+            mgr.name = name
+        mgr.model = model
+
+        setattr(model, name, ManagerDescriptor(mgr))
+
+        model._meta.local_managers.insert(0, mgr)
+        model._meta._expire_cache()
 
     def _detach_manager(self):
         '''
         Detach the manager, and reatach the previous manager (if there was one)
         '''
+        self.model_cls._meta.local_managers = list(
+            mgr for mgr in self.model_cls._meta.local_managers
+            if not isinstance(mgr, EntityManager))
+
         delattr(self.model_cls, self.config_cls.manager_attr)
         if hasattr(self.config_cls, 'old_mgr'):
             self.config_cls.old_mgr \

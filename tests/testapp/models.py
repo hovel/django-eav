@@ -15,7 +15,7 @@ class Patient(models.Model):
 @python_2_unicode_compatible
 class Encounter(models.Model):
     num = models.PositiveSmallIntegerField()
-    patient = models.ForeignKey(Patient)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
 
     def __str__(self):
         return '{}: encounter num {}'.format(self.patient, self.num)

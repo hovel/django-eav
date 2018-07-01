@@ -186,7 +186,8 @@ class Attribute(models.Model):
     name = models.CharField(_("name"), max_length=100,
                             help_text=_("User-friendly attribute name"))
 
-    site = models.ForeignKey(Site, verbose_name=_("site"))
+    site = models.ForeignKey(Site, on_delete=models.CASCADE,
+                             verbose_name=_("site"))
 
     slug = EavSlugField(_("slug"), max_length=50, db_index=True,
                         help_text=_("Short unique attribute label"))
@@ -195,7 +196,8 @@ class Attribute(models.Model):
                                    blank=True, null=True,
                                    help_text=_("Short description"))
 
-    enum_group = models.ForeignKey(EnumGroup, verbose_name=_("choice group"),
+    enum_group = models.ForeignKey(EnumGroup, on_delete=models.CASCADE,
+                                   verbose_name=_("choice group"),
                                    blank=True, null=True)
 
     @property
@@ -218,7 +220,8 @@ class Attribute(models.Model):
     on_site = CurrentSiteManager()
 
     #reference to Django model that this attribute is restricted to
-    parent = models.ForeignKey(ContentType, null=True, blank=True)
+    parent = models.ForeignKey(ContentType, on_delete=models.CASCADE,
+                               null=True, blank=True)
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.get('parent', None)
@@ -387,7 +390,8 @@ class Value(models.Model):
     <Value: crazy_dev_user - Favorite Drink: "red bull">
     '''
 
-    entity_ct = models.ForeignKey(ContentType, related_name='value_entities')
+    entity_ct = models.ForeignKey(ContentType, on_delete=models.CASCADE,
+                                  related_name='value_entities')
     entity_id = models.IntegerField()
     entity = GenericForeignKey(ct_field='entity_ct', fk_field='entity_id')
 
@@ -396,7 +400,8 @@ class Value(models.Model):
     value_int = models.IntegerField(blank=True, null=True)
     value_date = models.DateTimeField(blank=True, null=True)
     value_bool = models.NullBooleanField(blank=True, null=True)
-    value_enum = models.ForeignKey(EnumValue, blank=True, null=True,
+    value_enum = models.ForeignKey(EnumValue, on_delete=models.CASCADE,
+                                   blank=True, null=True,
                                    related_name='eav_values')
 
     def _get_value_datetime(self):
@@ -408,7 +413,8 @@ class Value(models.Model):
     value_datetime = property(_get_value_datetime, _set_value_datetime)
 
     generic_value_id = models.IntegerField(blank=True, null=True)
-    generic_value_ct = models.ForeignKey(ContentType, blank=True, null=True,
+    generic_value_ct = models.ForeignKey(ContentType, on_delete=models.CASCADE,
+                                         blank=True, null=True,
                                          related_name='value_values')
     value_object = GenericForeignKey(ct_field='generic_value_ct',
                                      fk_field='generic_value_id')
@@ -416,8 +422,8 @@ class Value(models.Model):
     created = models.DateTimeField(_("created"), auto_now_add=True)
     modified = models.DateTimeField(_("modified"), auto_now=True)
 
-    attribute = models.ForeignKey(Attribute, db_index=True,
-                                  verbose_name=_("attribute"))
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE,
+                                  db_index=True, verbose_name=_("attribute"))
 
     def save(self, *args, **kwargs):
         '''

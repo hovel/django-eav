@@ -27,6 +27,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='encounter',
             name='patient',
-            field=models.ForeignKey(to='testapp.Patient'),
+            field=models.ForeignKey(to='testapp.Patient', on_delete=models.CASCADE),
         ),
     ]

@@ -71,10 +71,10 @@ class Migration(migrations.Migration):
                 ('generic_value_id', models.IntegerField(null=True, blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='created')),
                 ('modified', models.DateTimeField(auto_now=True, verbose_name='modified')),
-                ('attribute', models.ForeignKey(verbose_name='attribute', to='eav.Attribute')),
-                ('entity_ct', models.ForeignKey(related_name='value_entities', to='contenttypes.ContentType')),
-                ('generic_value_ct', models.ForeignKey(related_name='value_values', blank=True, to='contenttypes.ContentType', null=True)),
-                ('value_enum', models.ForeignKey(related_name='eav_values', blank=True, to='eav.EnumValue', null=True)),
+                ('attribute', models.ForeignKey(verbose_name='attribute', to='eav.Attribute', on_delete=models.CASCADE)),
+                ('entity_ct', models.ForeignKey(related_name='value_entities', to='contenttypes.ContentType', on_delete=models.CASCADE)),
+                ('generic_value_ct', models.ForeignKey(related_name='value_values', blank=True, to='contenttypes.ContentType', on_delete=models.CASCADE, null=True)),
+                ('value_enum', models.ForeignKey(related_name='eav_values', blank=True, to='eav.EnumValue', on_delete=models.CASCADE, null=True)),
             ],
             options={
                 'verbose_name': 'value',
@@ -91,19 +91,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='attribute',
             name='enum_group',
-            field=models.ForeignKey(verbose_name='choice group', blank=True, to='eav.EnumGroup', null=True),
+            field=models.ForeignKey(verbose_name='choice group', blank=True, to='eav.EnumGroup', on_delete=models.CASCADE, null=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='attribute',
             name='parent',
-            field=models.ForeignKey(blank=True, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(blank=True, to='contenttypes.ContentType', on_delete=models.CASCADE, null=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='attribute',
             name='site',
-            field=models.ForeignKey(verbose_name='site', to='sites.Site'),
+            field=models.ForeignKey(verbose_name='site', to='sites.Site', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
