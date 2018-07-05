@@ -20,6 +20,7 @@ class DataValidation(TestCase):
 
         Attribute.objects.create(name='Age', datatype=Attribute.TYPE_INT)
         Attribute.objects.create(name='DoB', datatype=Attribute.TYPE_DATE)
+        Attribute.objects.create(name='DToB', datatype=Attribute.TYPE_DATETIME)
         Attribute.objects.create(name='Height', datatype=Attribute.TYPE_FLOAT)
         Attribute.objects.create(name='City', datatype=Attribute.TYPE_TEXT)
         Attribute.objects.create(name='Pregnant?', datatype=Attribute.TYPE_BOOLEAN)
@@ -98,6 +99,18 @@ class DataValidation(TestCase):
         p.save()
         self.assertEqual(Patient.objects.get(pk=p.pk).eav.dob, now_datetime)
         self.assertEqual(Patient.objects.get(pk=p.pk).eav.dob.date(), now_datetime.date())
+
+    def test_datetime_validation(self):
+        p = Patient.objects.create(name='Joe')
+        p.eav.dtob = 'bad'
+        self.assertRaises(ValidationError, p.save)
+        p.eav.dtob = 15
+        self.assertRaises(ValidationError, p.save)
+        now_datetime = now()
+        p.eav.dtob = now_datetime
+        p.save()
+        self.assertEqual(Patient.objects.get(pk=p.pk).eav.dtob, now_datetime)
+        self.assertEqual(Patient.objects.get(pk=p.pk).eav.dtob.date(), now_datetime.date())
 
     def test_float_validation(self):
         p = Patient.objects.create(name='Joe')

@@ -16,6 +16,7 @@ class FormTest(TestCase):
 
         Attribute.objects.create(name='Age', datatype=Attribute.TYPE_INT)
         Attribute.objects.create(name='DoB', datatype=Attribute.TYPE_DATE)
+        Attribute.objects.create(name='DToB', datatype=Attribute.TYPE_DATETIME)
         Attribute.objects.create(name='Height', datatype=Attribute.TYPE_FLOAT)
         Attribute.objects.create(name='City', datatype=Attribute.TYPE_TEXT)
         Attribute.objects.create(name='Pregnant?', datatype=Attribute.TYPE_BOOLEAN)
@@ -30,8 +31,9 @@ class FormTest(TestCase):
         Attribute.objects.create(name='Fever?', datatype=Attribute.TYPE_ENUM, enum_group=ynu, required=True)
 
     def test_form_validation(self):
-        kwargs = {'eav__age': 2, 'eav__dob': now(), 'eav__height': 14.1,
-                  'eav__city': 'SomeSity', 'eav__pregnant': False,
+        kwargs = {'eav__age': 2, 'eav__dob': now(), 'eav__dtob': now(),
+                  'eav__height': 14.1, 'eav__city': 'SomeSity',
+                  'eav__pregnant': False,
                   'eav__fever': EnumValue.objects.get(id=2)}
         p = Patient.objects.create(**kwargs)
 
@@ -42,6 +44,7 @@ class FormTest(TestCase):
 
         # all valid
         data = {'age': 1, 'dob_0': '2012-01-01', 'dob_1': '12:00:00',
+                'dtob_0': '2012-01-01', 'dtob_1': '12:00:00',
                 'height': 10.1, 'city': 'Moscow', 'pregnant': True, 'fever': 1}
         form = BaseDynamicEntityForm(data=data, instance=p)
         self.assertTrue(form.is_valid())
